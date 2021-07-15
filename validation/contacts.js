@@ -1,7 +1,7 @@
 const Joi = require('joi');
 
 const schemaCreateContact = Joi.object({
-  name: Joi.string().alphanum().min(2).max(30).required(),
+  name: Joi.string().min(2).max(30).required(),
   email: Joi.string().email().required(),
   phone: Joi.string()
     .pattern(/^[\d\s\- +()]+$/)
@@ -11,7 +11,7 @@ const schemaCreateContact = Joi.object({
 });
 
 const schemaUpdateContact = Joi.object({
-  name: Joi.string().alphanum().min(2).max(30).optional(),
+  name: Joi.string().min(2).max(30).optional(),
   email: Joi.string().email().optional(),
   phone: Joi.string()
     .pattern(/^[\d\s\- +()]+$/)
