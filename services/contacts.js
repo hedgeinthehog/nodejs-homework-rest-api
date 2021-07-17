@@ -11,10 +11,14 @@ const updateContact = async (id, fields) =>
 
 const removeContact = async (id) => Contact.findByIdAndRemove({ _id: id });
 
+const updateFavorite = async (id, { favorite }) =>
+  Contact.findByIdAndUpdate({ _id: id }, { favorite }, { new: true });
+
 module.exports = {
   listContacts,
   getContactById,
   createContact,
   updateContact,
   removeContact,
+  updateFavorite,
 };
