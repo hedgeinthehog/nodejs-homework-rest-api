@@ -89,6 +89,8 @@ const update = async (req, res, next) => {
       code: 400,
       message: 'Missing fields',
     });
+
+    return;
   }
 
   try {
@@ -99,6 +101,8 @@ const update = async (req, res, next) => {
         code: 404,
         message: 'Not found',
       });
+
+      return;
     }
 
     res.json({
@@ -115,12 +119,14 @@ const updateFavorite = async (req, res, next) => {
   const { contactId } = req.params;
   const { body } = req;
 
-  if (!body && !body.favorite) {
+  if (!body || !body.favorite) {
     res.status(400).json({
       status: 'error',
       code: 400,
       message: 'Missing field favorite',
     });
+
+    return;
   }
 
   try {
@@ -131,6 +137,8 @@ const updateFavorite = async (req, res, next) => {
         code: 404,
         message: 'Not found',
       });
+
+      return;
     }
 
     res.json({
