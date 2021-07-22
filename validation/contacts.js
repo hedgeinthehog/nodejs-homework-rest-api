@@ -1,7 +1,8 @@
 const Joi = require('joi');
+const { isValidObjectId } = require('mongoose');
 
 const schemaCreateContact = Joi.object({
-  name: Joi.string().alphanum().min(2).max(30).required(),
+  name: Joi.string().min(2).max(30).required(),
   email: Joi.string().email().required(),
   phone: Joi.string()
     .pattern(/^[\d\s\- +()]+$/)
@@ -11,7 +12,7 @@ const schemaCreateContact = Joi.object({
 });
 
 const schemaUpdateContact = Joi.object({
-  name: Joi.string().alphanum().min(2).max(30).optional(),
+  name: Joi.string().min(2).max(30).optional(),
   email: Joi.string().email().optional(),
   phone: Joi.string()
     .pattern(/^[\d\s\- +()]+$/)
@@ -39,4 +40,16 @@ module.exports.validateCreateContact = (req, _, next) => {
 
 module.exports.validateUpdateContact = (req, _, next) => {
   return validate(schemaUpdateContact, req.body, next);
+};
+
+module.exports.validateContactId = (req, _, next) => {
+  const { contactId } = req.params;
+
+  if (!isValidObjectId(contactId)) {
+    return next({
+      status: 404,
+      message: 'Not found',
+    });
+  }
+  next();
 };
