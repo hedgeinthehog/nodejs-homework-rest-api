@@ -40,9 +40,10 @@ const getOne = async (req, res, next) => {
 
 const create = async (req, res, next) => {
   const { body } = req;
+  const { id: userId } = req.user;
 
   try {
-    const newContact = await service.createContact(body);
+    const newContact = await service.createContact(body,  userId);
     res.json({
       status: 'success',
       code: 201,
