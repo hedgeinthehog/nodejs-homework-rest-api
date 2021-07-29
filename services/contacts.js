@@ -1,8 +1,11 @@
 const { Contact } = require('../model');
 
-const listContacts = async () => {
-  const result = await Contact.find({});
-  return result;
+const listContacts = async ({ limit = 5, page = 1 }) => {
+  const { docs: contacts, totalDocs: total} = await Contact.paginate({}, {
+    limit,
+    page,
+  });
+  return { contacts, total, limit: Number(limit), page: Number(page) };
 };
 
 const getContactById = async (id) => {
