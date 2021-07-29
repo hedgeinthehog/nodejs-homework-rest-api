@@ -1,10 +1,17 @@
 const { Contact } = require('../model');
 
-const listContacts = async ({ limit = 5, page = 1 }) => {
-  const { docs: contacts, totalDocs: total} = await Contact.paginate({}, {
+const listContacts = async ({ limit = 5, page = 1, favorite = false }) => {
+  const { docs, totalDocs } = await Contact.paginate({}, {
     limit,
     page,
+    populate: {
+      path: 'owner',
+    }
   });
+
+  const contacts = favorite ? docs.filter(doc => doc.favorite) : docs;
+  const total = favorite ? contacts.length : totalDocs;
+
   return { contacts, total, limit: Number(limit), page: Number(page) };
 };
 
