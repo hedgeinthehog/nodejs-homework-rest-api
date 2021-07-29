@@ -49,7 +49,7 @@ const login = async (req, res, next) => {
       id: user._id,
     }
     const token = jwt.sign(payload, SECRET_KEY);
-    await service.updateById(user._id, {token});
+    await service.updateById(user._id, { token });
     res.json({
       status: 'success',
       code: 200,
@@ -80,7 +80,7 @@ const getCurrent = async (req, res, next) => {
 const logout = async (req, res, next) => {
   const { _id: id } = req.user;
   try {
-    await service.updateById(id, {token: null});
+    await service.updateById(id, { token: null });
     res.status(204).json({
       status: 'success',
       code: 204,
@@ -90,4 +90,22 @@ const logout = async (req, res, next) => {
   }
 };
 
-module.exports = { signup, login, getCurrent, logout }
+const updateSubscription = async (req, res, next) => {
+  const { _id: id, email } = req.user;
+  const { subscription } = req.body;
+  try {
+    await service.updateById(id, { subscription });
+    res.json({
+      status: 'success',
+      code: 200,
+      data: {
+        email,
+        subscription,
+      }
+    });
+  } catch (e) {
+    next(e);
+  }
+}
+
+module.exports = { signup, login, getCurrent, logout, updateSubscription }
