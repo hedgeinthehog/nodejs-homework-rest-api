@@ -9,6 +9,8 @@ const schemaCreateContact = Joi.object({
     .min(5)
     .max(15)
     .required(),
+  favorite: Joi.boolean(),
+  owner: Joi.string(),
 });
 
 const schemaUpdateContact = Joi.object({
