@@ -109,4 +109,37 @@ const updateSubscription = async (req, res, next) => {
   }
 }
 
-module.exports = { signup, login, getCurrent, logout, updateSubscription }
+const updateAvatar = async (req, res, next) => {
+  const { id } = req.user;
+
+  if (!req.file) {
+    return res.status(400).json({
+      status: 'error',
+      code: 400,
+      message: 'File is required',
+    });
+  }; 
+  const pathFile = req.file.path;
+
+  try {
+    const avatarURL = await service.updateAvatar(id, pathFile);
+    return res.json({
+      status: 'success',
+      code: 200,
+      data: {
+        avatarURL,
+      }
+    })
+  } catch (e) {
+    next(e);
+  }
+}
+
+module.exports = {
+  signup,
+  login,
+  getCurrent,
+  logout,
+  updateSubscription,
+  updateAvatar
+}

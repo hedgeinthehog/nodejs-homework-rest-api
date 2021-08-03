@@ -21,7 +21,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use('/api/contacts', contactsRouter)
 app.use('/api/users', usersRouter)
 
-app.use((req, res) => {
+app.use((_, res) => {
   res.status(404).json({ status: 'error', code: '404', message: 'Not found' })
 })
 

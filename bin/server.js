@@ -1,10 +1,17 @@
 const mongoose = require('mongoose');
+const fs = require('fs').promises;
+const path = require('path');
 const app = require('../app');
+const {
+  createFolderIfNotExist,
+} = require('../helpers/fileSystem');
 
 require('dotenv').config();
 
 const uriDb = process.env.DB_HOST;
 const PORT = process.env.PORT || 3000;
+const TEMP_DIR = path.join(process.cwd(), process.env.TEMP_DIR);
+const AVATAR_DIR = path.resolve(__dirname, '../public', 'avatars');
 
 const db = mongoose.connect(uriDb, {
   promiseLibrary: global.Promise,
@@ -15,7 +22,9 @@ const db = mongoose.connect(uriDb, {
 });
 
 mongoose.connection.on('connected', () => {
-  app.listen(PORT, () => {
+  app.listen(PORT, async () => {
+    await createFolderIfNotExist(TEMP_DIR);
+    await createFolderIfNotExist(AVATAR_DIR);
     console.log(`Server running. Use our API on port: ${PORT}`);
   });
   console.log('Database connection successful');
