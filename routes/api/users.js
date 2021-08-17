@@ -12,6 +12,7 @@ const upload = require('../../helpers/multer');
 const {users : ctrl} = require('../../controllers');
 
 router.get('/current', auth, ctrl.getCurrent);
+router.get('/verify/:verificationToken', ctrl.verify)
 
 router.post('/signup', validateSignup, ctrl.signup); 
 router.post('/login', validateLogin, ctrl.login);
