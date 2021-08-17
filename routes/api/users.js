@@ -17,6 +17,7 @@ router.get('/verify/:verificationToken', ctrl.verify)
 router.post('/signup', validateSignup, ctrl.signup); 
 router.post('/login', validateLogin, ctrl.login);
 router.post('/logout', auth, ctrl.logout);
+router.post('/verify', ctrl.resendVerificationEmail);
 
 router.patch('/', auth, validateSubscription, ctrl.updateSubscription);
 router.patch('/avatars', auth, upload.single('avatar'), ctrl.updateAvatar)

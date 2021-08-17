@@ -18,12 +18,11 @@ const signup = async (req, res, next) => {
       return;
     }
     const verificationToken = uuidv4();
-    await service.create({ email, password, subscription, verificationToken});
-    console.log('email ', email)
-    sendMail({
+    await service.create({ email, password, subscription, verificationToken });
+    await sendMail({
       to: email,
       subject: 'Verification token',
-      text: '',
+      text: ' ',
       html: `<strong>Please click this link to verify your account: http://localhost:3000/api/users/verify/${verificationToken}</strong>`
     });
     res.status(201).json({
@@ -135,7 +134,7 @@ const updateAvatar = async (req, res, next) => {
       code: 400,
       message: 'File is required',
     });
-  }; 
+  };
   const pathFile = req.file.path;
 
   try {
@@ -176,6 +175,52 @@ const verify = async (req, res, next) => {
   }
 }
 
+const resendVerificationEmail = async (req, res, next) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({
+      status: 'error',
+      code: 400,
+      message: 'Missing required field email',
+    })
+  }
+
+  try {
+    const user = await service.getOne({ email });
+    
+    if (!user) {
+      return res.status(404).json({
+        status: 'error',
+        code: 404,
+        message: 'User not found',
+      })
+    }
+    
+    if (user.verify) {
+      return res.status(400).json({
+        status: 'error',
+        code: 400,
+        message: 'Verification has already been passed',
+      })
+    }
+
+    await sendMail({
+      to: email,
+      subject: 'Verification token',
+      text: ' ',
+      html: `<strong>Please click this link to verify your account: http://localhost:3000/api/users/verify/${user.verificationToken}</strong>`
+    });
+    res.json({
+      status: 'success',
+      code: 200,
+      message: 'Verification email sent',
+    })
+  } catch (e) {
+    next(e);
+  }
+}
+
 module.exports = {
   signup,
   login,
@@ -184,4 +229,5 @@ module.exports = {
   updateSubscription,
   updateAvatar,
   verify,
+  resendVerificationEmail,
 }
