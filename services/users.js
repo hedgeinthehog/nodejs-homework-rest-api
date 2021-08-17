@@ -7,8 +7,8 @@ const getOne = filter => {
   return User.findOne(filter);
 }
 
-const create = ({ email, password, subscription }) => {
-  const newUser = new User({ email, subscription });
+const create = ({ email, password, subscription, verificationToken }) => {
+  const newUser = new User({ email, subscription, verificationToken });
   newUser.setPassword(password);
   return newUser.save();
 }

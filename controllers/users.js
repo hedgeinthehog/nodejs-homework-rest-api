@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken');
+const { v4: uuidv4 } = require('uuid');
 require('dotenv').config();
 const { users: service } = require('../services/');
+const { sendMail } = require('../utils');
 
 const signup = async (req, res, next) => {
   const { email, password, subscription } = req.body;
@@ -15,7 +17,15 @@ const signup = async (req, res, next) => {
       })
       return;
     }
-    await service.create({ email, password, subscription });
+    const verificationToken = uuidv4();
+    await service.create({ email, password, subscription, verificationToken});
+    console.log('email ', email)
+    sendMail({
+      to: email,
+      subject: 'Verification token',
+      text: '',
+      html: `<strong>Please click this link to verify your account: http://localhost:3000/api/users/verify/${verificationToken}</strong>`
+    });
     res.status(201).json({
       status: 'success',
       code: 201,
@@ -24,7 +34,6 @@ const signup = async (req, res, next) => {
         subscription: subscription ?? 'starter',
       }
     });
-
   } catch (e) {
     next(e);
   }
@@ -37,10 +46,18 @@ const login = async (req, res, next) => {
     const user = await service.getOne({ email });
 
     if (!user || !user.comparePassword(password)) {
-      res.status(400).json({
+      return res.status(400).json({
         status: 'error',
         code: 400,
         message: 'Wrong email or password',
+      })
+    }
+
+    if (!user.verify) {
+      return res.status(400).json({
+        status: 'error',
+        code: 400,
+        message: 'User not verified',
       })
     }
 
